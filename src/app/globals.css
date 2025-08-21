@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { 
+  --radius: 1rem; 
+}
+
+html, body { 
+  height: 100%; 
+  background: #f8fafc; 
+  color: #111827; 
+}
+
+.card-float { 
+  @apply rounded-2xl shadow-float bg-surface; 
+}
+
+.tap { 
+  @apply min-h-11 min-w-11; 
+} /* 44px tap targets */
