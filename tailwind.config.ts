@@ -39,14 +39,14 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        brand: { 
-          DEFAULT: "hsl(var(--brand))", 
-          foreground: "#111827" 
-        },
-        surface: "#FFFFFF",
-        ink: "#111827",
-        charcoal: "#1F2937",
-        slateish: "#374151"
+        // Dark theme professional colors
+        dark: {
+          bg: "#0a0a0a",
+          surface: "#1a1a1a", 
+          card: "#2a2a2a",
+          border: "#333333",
+          hover: "#3a3a3a"
+        }
       },
       borderRadius: { 
         lg: "var(--radius)",
@@ -56,7 +56,7 @@ export default {
         "2xl": "1.25rem" 
       },
       boxShadow: { 
-        float: "0 10px 30px rgba(0,0,0,0.10)" 
+        "dark-card": "0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2)"
       },
       fontFamily: { 
         sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"] 

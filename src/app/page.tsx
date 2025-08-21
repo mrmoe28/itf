@@ -1,146 +1,253 @@
 "use client";
-import AppShell from "@/components/AppShell";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Briefcase, CheckSquare, AlertTriangle, Sun, Battery, Zap } from "lucide-react";
+import { Plus, MoreHorizontal, Calendar, MessageSquare, Paperclip } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Sidebar from "@/components/Sidebar";
 
-export default function Dashboard() {
-  const stats = [
-    { 
-      title: "Active Jobs", 
-      value: "0", 
-      icon: Briefcase, 
-      color: "from-blue-500 to-blue-600",
-      bgColor: "bg-blue-50 border-blue-200"
-    },
-    { 
-      title: "In Progress", 
-      value: "0", 
-      icon: CheckSquare, 
-      color: "from-amber-500 to-orange-500",
-      bgColor: "bg-amber-50 border-amber-200"
-    },
-    { 
-      title: "Blocked", 
-      value: "0", 
-      icon: AlertTriangle, 
-      color: "from-red-500 to-red-600",
-      bgColor: "bg-red-50 border-red-200"
+interface Task {
+  id: number;
+  title: string;
+  description: string;
+  priority: string;
+  date: string;
+  assignees: Array<{ name: string; avatar: string }>;
+  comments: number;
+  attachments: number;
+  progress?: number;
+}
+
+// Sample task data matching the reference design
+const tasks = {
+  todo: [
+    {
+      id: 1,
+      title: "New Task",
+      description: "Involves creating and assigning a new task within the project management system. The...",
+      priority: "Medium",
+      date: "Sep 09, 2024",
+      assignees: [{ name: "User", avatar: "U" }],
+      comments: 0,
+      attachments: 0
     }
-  ];
+  ],
+  inProgress: [
+    {
+      id: 2,
+      title: "Planning meeting for second option of the dashboard",
+      description: "Focus on strategizing and outlining the development of the second option for the dashboard...",
+      priority: "Medium",
+      date: "Sep 09, 2024",
+      assignees: [{ name: "User", avatar: "U" }, { name: "Team", avatar: "T" }],
+      comments: 2,
+      attachments: 7
+    },
+    {
+      id: 3,
+      title: "Finish the ideation",
+      description: "The team will conclude the ideation phase by finalizing and refining concepts that have been d...",
+      priority: "High",
+      date: "Sep 19, 2024",
+      assignees: [{ name: "User", avatar: "U" }],
+      comments: 12,
+      attachments: 34,
+      progress: 50
+    },
+    {
+      id: 4,
+      title: "Preparation low - fidelity for mobile",
+      description: "Involves creating low-fidelity wireframes specifically for the mobile version of the project...",
+      priority: "Low",
+      date: "Sep 16, 2024",
+      assignees: [{ name: "Team", avatar: "T" }],
+      comments: 0,
+      attachments: 0
+    }
+  ],
+  inReview: [
+    {
+      id: 5,
+      title: "Business model canvas of product",
+      description: "Developing a comprehensive Business Model Canvas for the product, outlining the key com...",
+      priority: "Low",
+      date: "Sep 01, 2024",
+      assignees: [{ name: "User", avatar: "U" }, { name: "Team", avatar: "T" }],
+      comments: 0,
+      attachments: 0
+    }
+  ]
+};
 
+const priorityColors: Record<string, string> = {
+  Low: "bg-gray-500",
+  Medium: "bg-yellow-500",
+  High: "bg-red-500"
+};
+
+function TaskCard({ task }: { task: Task }) {
   return (
-    <AppShell title="Dashboard">
-      {/* Welcome Section */}
-      <div className="mb-8 p-6 rounded-2xl bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 border border-orange-200/50">
-        <div className="flex items-center gap-4">
-          <div className="p-3 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 shadow-lg">
-            <Sun className="h-8 w-8 text-white" />
+    <div className="task-card group cursor-pointer">
+      <div className="flex items-start justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <div className={`w-2 h-2 rounded-full ${priorityColors[task.priority]}`} />
+          <span className="text-xs text-muted-foreground">{task.priority}</span>
+        </div>
+        <Button variant="ghost" size="sm" className="opacity-0 group-hover:opacity-100">
+          <MoreHorizontal className="h-4 w-4" />
+        </Button>
+      </div>
+
+      <h3 className="font-medium text-foreground mb-2 line-clamp-2">
+        {task.title}
+      </h3>
+      
+      <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+        {task.description}
+      </p>
+
+      {task.progress && (
+        <div className="mb-4">
+          <div className="flex justify-between text-xs text-muted-foreground mb-1">
+            <span>Progress</span>
+            <span>{task.progress}%</span>
           </div>
-          <div>
-            <h2 className="text-2xl font-bold text-gray-800">Welcome to ITF Solar CRM</h2>
-            <p className="text-gray-600">Manage your solar installation projects efficiently</p>
+          <div className="w-full bg-accent rounded-full h-1.5">
+            <div 
+              className="bg-primary h-1.5 rounded-full transition-all"
+              style={{ width: `${task.progress}%` }}
+            />
+          </div>
+        </div>
+      )}
+
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Calendar className="h-3 w-3 text-muted-foreground" />
+          <span className="text-xs text-muted-foreground">{task.date}</span>
+        </div>
+        
+        <div className="flex items-center gap-3">
+          {task.comments > 0 && (
+            <div className="flex items-center gap-1">
+              <MessageSquare className="h-3 w-3 text-muted-foreground" />
+              <span className="text-xs text-muted-foreground">{task.comments}</span>
+            </div>
+          )}
+          {task.attachments > 0 && (
+            <div className="flex items-center gap-1">
+              <Paperclip className="h-3 w-3 text-muted-foreground" />
+              <span className="text-xs text-muted-foreground">{task.attachments}</span>
+            </div>
+          )}
+          
+          <div className="flex -space-x-2">
+            {task.assignees.map((assignee, index: number) => (
+              <div
+                key={index}
+                className="w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center font-medium border-2 border-card"
+              >
+                {assignee.avatar}
+              </div>
+            ))}
           </div>
         </div>
       </div>
+    </div>
+  );
+}
 
-      {/* Stats Cards */}
-      <section className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
-        {stats.map(({ title, value, icon: Icon, color, bgColor }) => (
-          <Card key={title} className={`card-float ${bgColor} transition-all duration-200 hover:shadow-xl`}>
-            <CardHeader className="pb-2">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-medium text-gray-700">{title}</CardTitle>
-                <div className={`p-2 rounded-lg bg-gradient-to-r ${color} shadow-md`}>
-                  <Icon className="h-4 w-4 text-white" />
+function KanbanColumn({ title, tasks, onAddTask }: { title: string; tasks: Task[]; onAddTask: () => void }) {
+  return (
+    <div className="kanban-column p-4 min-w-80">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <h2 className="font-medium text-foreground">{title}</h2>
+          <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">
+            {tasks.length}
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="sm" onClick={onAddTask}>
+            <Plus className="h-4 w-4" />
+          </Button>
+          <Button variant="ghost" size="sm">
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
+
+      <div className="space-y-3">
+        {tasks.map((task) => (
+          <TaskCard key={task.id} task={task} />
+        ))}
+        
+        <Button 
+          variant="ghost" 
+          className="w-full justify-start text-muted-foreground hover:text-foreground"
+          onClick={onAddTask}
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          Add New Task
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+export default function Dashboard() {
+  const handleAddTask = () => {
+    // TODO: Implement add task functionality
+    console.log("Add task clicked");
+  };
+
+  return (
+    <div className="flex h-screen bg-background">
+      <Sidebar />
+      
+      <main className="flex-1 overflow-hidden">
+        {/* Header */}
+        <header className="border-b border-border p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-xl font-semibold text-foreground">Monicca - Saas Product</h1>
+              <p className="text-sm text-muted-foreground">Project management workspace</p>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="flex -space-x-2">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <div
+                    key={i}
+                    className="w-8 h-8 rounded-full bg-primary text-primary-foreground text-sm flex items-center justify-center font-medium border-2 border-background"
+                  >
+                    {i}
+                  </div>
+                ))}
+                <div className="w-8 h-8 rounded-full bg-muted text-muted-foreground text-sm flex items-center justify-center font-medium border-2 border-background">
+                  +3
                 </div>
               </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-gray-800">{value}</div>
-              <p className="text-xs text-gray-500 mt-1">projects</p>
-            </CardContent>
-          </Card>
-        ))}
-      </section>
+              <Button>Invite Member</Button>
+            </div>
+          </div>
+        </header>
 
-      {/* Main Content Grid */}
-      <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recent Jobs */}
-        <Card className="card-float bg-white/80 backdrop-blur-sm border border-orange-200/50">
-          <CardHeader className="border-b border-orange-100/50 bg-gradient-to-r from-amber-50/50 to-orange-50/50">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-gradient-to-r from-amber-400 to-orange-500">
-                <Briefcase className="h-5 w-5 text-white" />
-              </div>
-              <CardTitle className="text-lg">Recent Jobs</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent className="pt-6">
-            <div className="flex flex-col items-center justify-center py-8 text-center">
-              <div className="p-4 rounded-full bg-amber-50 mb-4">
-                <Briefcase className="h-8 w-8 text-amber-500" />
-              </div>
-              <p className="text-gray-500 mb-2">No jobs yet</p>
-              <p className="text-sm text-gray-400">Start by creating your first solar installation project</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* My Tasks */}
-        <Card className="card-float bg-white/80 backdrop-blur-sm border border-orange-200/50">
-          <CardHeader className="border-b border-orange-100/50 bg-gradient-to-r from-amber-50/50 to-orange-50/50">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-gradient-to-r from-amber-400 to-orange-500">
-                <CheckSquare className="h-5 w-5 text-white" />
-              </div>
-              <CardTitle className="text-lg">My Tasks</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent className="pt-6">
-            <div className="flex flex-col items-center justify-center py-8 text-center">
-              <div className="p-4 rounded-full bg-amber-50 mb-4">
-                <CheckSquare className="h-8 w-8 text-amber-500" />
-              </div>
-              <p className="text-gray-500 mb-2">No tasks yet</p>
-              <p className="text-sm text-gray-400">Tasks will appear here once jobs are created</p>
-            </div>
-          </CardContent>
-        </Card>
-      </section>
-
-      {/* Quick Actions - Future Enhancement */}
-      <section className="mt-8">
-        <Card className="card-float bg-gradient-to-r from-amber-50 via-orange-50 to-yellow-50 border border-orange-200/50">
-          <CardHeader>
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-gradient-to-r from-amber-400 to-orange-500">
-                <Zap className="h-5 w-5 text-white" />
-              </div>
-              <CardTitle className="text-lg">Quick Actions</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="flex flex-col items-center p-4 rounded-lg bg-white/60 backdrop-blur-sm border border-orange-200/30 hover:bg-white/80 transition-all duration-200 cursor-pointer">
-                <Briefcase className="h-8 w-8 text-amber-600 mb-2" />
-                <span className="text-sm font-medium text-gray-700">New Job</span>
-              </div>
-              <div className="flex flex-col items-center p-4 rounded-lg bg-white/60 backdrop-blur-sm border border-orange-200/30 hover:bg-white/80 transition-all duration-200 cursor-pointer">
-                <CheckSquare className="h-8 w-8 text-amber-600 mb-2" />
-                <span className="text-sm font-medium text-gray-700">Add Task</span>
-              </div>
-              <div className="flex flex-col items-center p-4 rounded-lg bg-white/60 backdrop-blur-sm border border-orange-200/30 hover:bg-white/80 transition-all duration-200 cursor-pointer">
-                <Sun className="h-8 w-8 text-amber-600 mb-2" />
-                <span className="text-sm font-medium text-gray-700">Site Survey</span>
-              </div>
-              <div className="flex flex-col items-center p-4 rounded-lg bg-white/60 backdrop-blur-sm border border-orange-200/30 hover:bg-white/80 transition-all duration-200 cursor-pointer">
-                <Battery className="h-8 w-8 text-amber-600 mb-2" />
-                <span className="text-sm font-medium text-gray-700">Inventory</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </section>
-    </AppShell>
+        {/* Kanban Board */}
+        <div className="flex overflow-x-auto h-[calc(100vh-73px)]">
+          <KanbanColumn 
+            title="To Do" 
+            tasks={tasks.todo} 
+            onAddTask={handleAddTask} 
+          />
+          <KanbanColumn 
+            title="In Progress" 
+            tasks={tasks.inProgress} 
+            onAddTask={handleAddTask} 
+          />
+          <KanbanColumn 
+            title="In Review" 
+            tasks={tasks.inReview} 
+            onAddTask={handleAddTask} 
+          />
+        </div>
+      </main>
+    </div>
   );
 }

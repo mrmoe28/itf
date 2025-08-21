@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Zap } from "lucide-react";
+import { Building2 } from "lucide-react";
 
 export default function SignIn() {
   const [name, setName] = useState("");
@@ -25,55 +25,62 @@ export default function SignIn() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 flex items-center justify-center p-6">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 bg-gradient-to-br from-amber-100/20 via-transparent to-orange-100/20" />
+    <main className="min-h-screen bg-background flex items-center justify-center p-6">
+      {/* Background Grid Pattern */}
+      <div className="absolute inset-0 bg-grid-white/[0.02] bg-grid-16" />
       
       {/* Sign In Card */}
-      <Card className="relative w-full max-w-md card-float backdrop-blur-sm bg-white/95 border border-orange-200/50">
-        <CardHeader className="text-center space-y-4">
+      <Card className="relative w-full max-w-md dark-card">
+        <CardHeader className="text-center space-y-6 pb-8">
           {/* Brand Logo */}
-          <div className="flex items-center justify-center gap-3 mb-2">
-            <div className="p-3 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 shadow-lg">
-              <Zap className="h-8 w-8 text-white" />
+          <div className="flex items-center justify-center gap-3">
+            <div className="p-3 rounded-lg bg-primary shadow-lg">
+              <Building2 className="h-6 w-6 text-primary-foreground" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
+              <h1 className="text-2xl font-bold text-foreground">
                 ITF
               </h1>
-              <p className="text-xs text-muted-foreground font-medium">Solar CRM</p>
+              <p className="text-xs text-muted-foreground">Project Management</p>
             </div>
           </div>
-          <CardTitle className="text-2xl text-gray-800">Welcome Back</CardTitle>
-          <p className="text-sm text-muted-foreground">Sign in to access your solar projects</p>
+          
+          <div className="space-y-2">
+            <CardTitle className="text-xl text-foreground">Sign in to your workspace</CardTitle>
+            <p className="text-sm text-muted-foreground">
+              Enter your name to access your projects
+            </p>
+          </div>
         </CardHeader>
         
         <CardContent>
-          <form onSubmit={handleSignIn} className="space-y-6">
+          <form onSubmit={handleSignIn} className="space-y-4">
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">Your Name</label>
+              <label className="text-sm font-medium text-foreground">
+                Full Name
+              </label>
               <Input
-                placeholder="Enter your name (e.g. Moe)"
+                placeholder="Enter your full name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 autoFocus
-                className="tap transition-all duration-200 border-orange-200 focus:border-orange-400 focus:ring-2 focus:ring-orange-200"
+                className="tap bg-input border-border focus:border-primary focus:ring-1 focus:ring-primary"
               />
             </div>
             
             <Button 
               type="submit" 
-              className="w-full tap bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold shadow-lg shadow-orange-500/25 transition-all duration-200 transform hover:scale-[1.02]"
+              className="w-full tap bg-primary hover:bg-primary/90 text-primary-foreground font-medium transition-colors"
               disabled={!name.trim()}
             >
-              Continue to Dashboard
+              Continue
             </Button>
           </form>
           
           {/* Footer */}
-          <div className="mt-6 pt-4 border-t border-orange-200/50">
+          <div className="mt-6 pt-4 border-t border-border">
             <p className="text-center text-xs text-muted-foreground">
-              Field-ready solar project management
+              Professional project management platform
             </p>
           </div>
         </CardContent>
