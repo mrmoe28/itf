@@ -85,64 +85,73 @@ const priorityColors: Record<string, string> = {
 function TaskCard({ task }: { task: Task }) {
   return (
     <div className="task-card group cursor-pointer">
-      <div className="flex items-start justify-between mb-3">
+      {/* Priority and Menu */}
+      <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-2">
-          <div className={`w-2 h-2 rounded-full ${priorityColors[task.priority]}`} />
-          <span className="text-xs text-muted-foreground">{task.priority}</span>
+          <div className={`w-3 h-3 rounded-full shadow-sm ${priorityColors[task.priority]} group-hover:scale-110 transition-transform duration-200`} />
+          <span className="text-xs font-medium text-white/60 tracking-wide uppercase">{task.priority}</span>
         </div>
-        <Button variant="ghost" size="sm" className="opacity-0 group-hover:opacity-100">
-          <MoreHorizontal className="h-4 w-4" />
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          className="opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white/10 rounded-lg"
+        >
+          <MoreHorizontal className="h-4 w-4 text-white/70" />
         </Button>
       </div>
 
-      <h3 className="font-medium text-foreground mb-2 line-clamp-2">
+      {/* Task Title */}
+      <h3 className="font-semibold text-white mb-3 line-clamp-2 text-sm leading-relaxed group-hover:text-white/90 transition-colors duration-200">
         {task.title}
       </h3>
       
-      <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+      {/* Task Description */}
+      <p className="text-xs text-white/50 mb-4 line-clamp-3 leading-relaxed">
         {task.description}
       </p>
 
+      {/* Progress Bar */}
       {task.progress && (
         <div className="mb-4">
-          <div className="flex justify-between text-xs text-muted-foreground mb-1">
-            <span>Progress</span>
-            <span>{task.progress}%</span>
+          <div className="flex justify-between text-xs mb-2">
+            <span className="text-white/60 font-medium">Progress</span>
+            <span className="text-white/80 font-semibold">{task.progress}%</span>
           </div>
-          <div className="w-full bg-accent rounded-full h-1.5">
+          <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden backdrop-blur-sm">
             <div 
-              className="bg-primary h-1.5 rounded-full transition-all"
+              className="modern-progress h-2 transition-all duration-500 ease-out"
               style={{ width: `${task.progress}%` }}
             />
           </div>
         </div>
       )}
 
-      <div className="flex items-center justify-between">
+      {/* Footer */}
+      <div className="flex items-center justify-between pt-2 border-t border-white/10">
         <div className="flex items-center gap-2">
-          <Calendar className="h-3 w-3 text-muted-foreground" />
-          <span className="text-xs text-muted-foreground">{task.date}</span>
+          <Calendar className="h-3 w-3 text-white/40" />
+          <span className="text-xs text-white/50 font-medium">{task.date}</span>
         </div>
         
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           {task.comments > 0 && (
-            <div className="flex items-center gap-1">
-              <MessageSquare className="h-3 w-3 text-muted-foreground" />
-              <span className="text-xs text-muted-foreground">{task.comments}</span>
+            <div className="flex items-center gap-1.5">
+              <MessageSquare className="h-3 w-3 text-white/40" />
+              <span className="text-xs text-white/60 font-medium">{task.comments}</span>
             </div>
           )}
           {task.attachments > 0 && (
-            <div className="flex items-center gap-1">
-              <Paperclip className="h-3 w-3 text-muted-foreground" />
-              <span className="text-xs text-muted-foreground">{task.attachments}</span>
+            <div className="flex items-center gap-1.5">
+              <Paperclip className="h-3 w-3 text-white/40" />
+              <span className="text-xs text-white/60 font-medium">{task.attachments}</span>
             </div>
           )}
           
-          <div className="flex -space-x-2">
+          <div className="flex -space-x-1.5">
             {task.assignees.map((assignee, index: number) => (
               <div
                 key={index}
-                className="w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center font-medium border-2 border-card"
+                className="w-7 h-7 rounded-full bg-gradient-to-br from-primary/80 to-primary text-white text-xs flex items-center justify-center font-bold border-2 border-white/20 shadow-lg backdrop-blur-sm hover:scale-110 transition-transform duration-200"
               >
                 {assignee.avatar}
               </div>
@@ -156,36 +165,48 @@ function TaskCard({ task }: { task: Task }) {
 
 function KanbanColumn({ title, tasks, onAddTask }: { title: string; tasks: Task[]; onAddTask: () => void }) {
   return (
-    <div className="kanban-column p-4 min-w-80">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <h2 className="font-medium text-foreground">{title}</h2>
-          <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">
+    <div className="kanban-column p-6 min-w-80">
+      {/* Column Header */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <h2 className="font-semibold text-white text-base tracking-wide">{title}</h2>
+          <span className="text-xs font-bold text-white/80 bg-white/20 px-2.5 py-1 rounded-full backdrop-blur-sm border border-white/20">
             {tasks.length}
           </span>
         </div>
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="sm" onClick={onAddTask}>
-            <Plus className="h-4 w-4" />
+        <div className="flex items-center gap-1">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={onAddTask}
+            className="hover:bg-white/10 rounded-lg transition-all duration-200 hover:scale-110"
+          >
+            <Plus className="h-4 w-4 text-white/70 hover:text-white" />
           </Button>
-          <Button variant="ghost" size="sm">
-            <MoreHorizontal className="h-4 w-4" />
+          <Button 
+            variant="ghost" 
+            size="sm"
+            className="hover:bg-white/10 rounded-lg transition-all duration-200 hover:scale-110"
+          >
+            <MoreHorizontal className="h-4 w-4 text-white/70 hover:text-white" />
           </Button>
         </div>
       </div>
 
-      <div className="space-y-3">
+      {/* Tasks */}
+      <div className="space-y-4">
         {tasks.map((task) => (
           <TaskCard key={task.id} task={task} />
         ))}
         
+        {/* Add New Task Button */}
         <Button 
           variant="ghost" 
-          className="w-full justify-start text-muted-foreground hover:text-foreground"
+          className="w-full justify-start text-white/50 hover:text-white/80 hover:bg-white/5 rounded-xl py-4 border-2 border-dashed border-white/20 hover:border-white/40 transition-all duration-300 group"
           onClick={onAddTask}
         >
-          <Plus className="h-4 w-4 mr-2" />
-          Add New Task
+          <Plus className="h-4 w-4 mr-3 group-hover:scale-110 transition-transform duration-200" />
+          <span className="font-medium">Add New Task</span>
         </Button>
       </div>
     </div>
@@ -204,27 +225,35 @@ export default function Dashboard() {
       
       <main className="flex-1 overflow-hidden">
         {/* Header */}
-        <header className="border-b border-border p-6">
+        <header className="border-b border-white/10 p-8 relative">
+          <div className="absolute top-0 left-8 right-8 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-xl font-semibold text-foreground">Monicca - Saas Product</h1>
-              <p className="text-sm text-muted-foreground">Project management workspace</p>
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-white via-white to-white/80 bg-clip-text text-transparent tracking-tight">
+                Monicca - Saas Product
+              </h1>
+              <p className="text-sm text-white/60 font-medium mt-1 tracking-wide">Project management workspace</p>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
+              {/* Team Avatars */}
               <div className="flex -space-x-2">
                 {[1, 2, 3, 4, 5].map((i) => (
                   <div
                     key={i}
-                    className="w-8 h-8 rounded-full bg-primary text-primary-foreground text-sm flex items-center justify-center font-medium border-2 border-background"
+                    className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/80 to-primary text-white text-sm flex items-center justify-center font-bold border-2 border-white/20 shadow-lg backdrop-blur-sm hover:scale-110 hover:z-10 transition-all duration-200"
                   >
                     {i}
                   </div>
                 ))}
-                <div className="w-8 h-8 rounded-full bg-muted text-muted-foreground text-sm flex items-center justify-center font-medium border-2 border-background">
+                <div className="w-10 h-10 rounded-full bg-white/20 text-white/80 text-sm flex items-center justify-center font-bold border-2 border-white/20 backdrop-blur-sm hover:scale-110 hover:z-10 transition-all duration-200">
                   +3
                 </div>
               </div>
-              <Button>Invite Member</Button>
+              
+              {/* Invite Button */}
+              <Button className="glass-button text-white font-semibold px-6 py-2.5 tracking-wide hover:scale-105 transition-all duration-300">
+                Invite Member
+              </Button>
             </div>
           </div>
         </header>
