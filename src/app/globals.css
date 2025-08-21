@@ -53,10 +53,11 @@
 
 @layer base {
   * {
-    @apply border-border;
+    border-color: hsl(var(--border));
   }
   body {
-    @apply bg-background text-foreground;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
   }
 }
 
@@ -68,11 +69,15 @@ html, body {
 }
 
 .card-float { 
-  @apply rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.10)] bg-card border border-border; 
+  border-radius: 1.25rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.10);
+  background-color: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
 }
 
 .tap { 
-  @apply min-h-11 min-w-11; /* 44px tap targets for touch */
+  min-height: 2.75rem; /* 44px tap targets for touch */
+  min-width: 2.75rem;
 }
 
 .brand-gradient {
@@ -80,5 +85,7 @@ html, body {
 }
 
 .glass-effect {
-  @apply backdrop-blur-md bg-white/80 border border-white/20;
+  backdrop-filter: blur(12px);
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
