@@ -1,0 +1,230 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DATABASE_URL_UNPOOLED")
+}
+
+// User Management
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  role      UserRole @default(TECHNICIAN)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  assignedJobs     Job[]     @relation("AssignedTechnician")
+  createdJobs      Job[]     @relation("JobCreatedBy") 
+  assignedTasks    Task[]
+  createdContacts  Contact[] @relation("ContactCreatedBy")
+  sessions         Session[]
+
+  @@map("users")
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  name      String
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+// Contact/Customer Management  
+model Contact {
+  id          String      @id @default(cuid())
+  firstName   String
+  lastName    String
+  email       String?
+  phone       String?
+  address     String?
+  city        String?
+  state       String?
+  zipCode     String?
+  leadSource  LeadSource?
+  leadScore   Int?        @default(0)
+  status      LeadStatus  @default(NEW)
+  notes       String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  createdById String
+
+  // Relations
+  createdBy User  @relation("ContactCreatedBy", fields: [createdById], references: [id])
+  jobs      Job[]
+
+  @@map("contacts")
+}
+
+// Job/Project Management
+model Job {
+  id                String        @id @default(cuid())
+  jobNumber         String        @unique
+  contactId         String
+  assignedToId      String?
+  createdById       String
+  title             String
+  description       String?
+  status            JobStatus     @default(QUOTED)
+  priority          JobPriority   @default(MEDIUM)
+  systemSize        Float?        // kW
+  estimatedValue    Decimal?      @db.Decimal(10, 2)
+  actualCost        Decimal?      @db.Decimal(10, 2)
+  startDate         DateTime?
+  completionDate    DateTime?
+  installationNotes String?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  // Relations
+  contact    Contact @relation(fields: [contactId], references: [id])
+  assignedTo User?   @relation("AssignedTechnician", fields: [assignedToId], references: [id])
+  createdBy  User    @relation("JobCreatedBy", fields: [createdById], references: [id])
+  tasks      Task[]
+  materials  JobMaterial[]
+
+  @@map("jobs")
+}
+
+// Task Management
+model Task {
+  id          String     @id @default(cuid())
+  jobId       String
+  assignedToId String?
+  title       String
+  description String?
+  status      TaskStatus @default(BACKLOG)
+  priority    TaskPriority @default(MEDIUM)
+  dueDate     DateTime?
+  completedAt DateTime?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  // Relations
+  job        Job   @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  assignedTo User? @relation(fields: [assignedToId], references: [id])
+
+  @@map("tasks")
+}
+
+// Equipment/Material Management
+model Material {
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+  sku         String  @unique
+  category    MaterialCategory
+  unitPrice   Decimal @db.Decimal(10, 2)
+  unit        String  // e.g., "each", "ft", "panel"
+  inStock     Int     @default(0)
+  minStock    Int     @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  jobMaterials JobMaterial[]
+
+  @@map("materials")
+}
+
+model JobMaterial {
+  id         String  @id @default(cuid())
+  jobId      String
+  materialId String
+  quantity   Int
+  unitPrice  Decimal @db.Decimal(10, 2)
+  totalPrice Decimal @db.Decimal(10, 2)
+
+  // Relations
+  job      Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  material Material @relation(fields: [materialId], references: [id])
+
+  @@unique([jobId, materialId])
+  @@map("job_materials")
+}
+
+// Enums
+enum UserRole {
+  ADMIN
+  MANAGER
+  TECHNICIAN
+  SALES
+}
+
+enum LeadSource {
+  WEBSITE
+  REFERRAL
+  SOCIAL_MEDIA
+  GOOGLE_ADS
+  PHONE
+  EMAIL
+  TRADE_SHOW
+  OTHER
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  QUALIFIED
+  PROPOSAL_SENT
+  FOLLOW_UP
+  WON
+  LOST
+  CLOSED
+}
+
+enum JobStatus {
+  QUOTED
+  APPROVED
+  SCHEDULED
+  IN_PROGRESS
+  INSPECTION_PENDING
+  COMPLETED
+  CANCELLED
+  ON_HOLD
+}
+
+enum JobPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum TaskStatus {
+  BACKLOG
+  IN_PROGRESS
+  BLOCKED
+  COMPLETED
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum MaterialCategory {
+  SOLAR_PANELS
+  INVERTERS
+  MOUNTING
+  ELECTRICAL
+  BATTERIES
+  MONITORING
+  TOOLS
+  SAFETY
+  OTHER
+}
