@@ -1,5 +1,4 @@
 import type { Config } from "tailwindcss";
-import { fontFamily } from "tailwindcss/defaultTheme";
 
 export default {
   darkMode: ["class"],
@@ -24,7 +23,7 @@ export default {
         float: "0 10px 30px rgba(0,0,0,0.10)" 
       },
       fontFamily: { 
-        sans: ["Inter", ...fontFamily.sans] 
+        sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"] 
       }
     }
   },
